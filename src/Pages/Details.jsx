@@ -17,6 +17,10 @@ const BookDetails = () => {
   const navigate = useNavigate();
   const [bookDetails, setBookDetails] = useState(null);
   const [loading, setLoading] = useState(false);
+  
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   useEffect(() => {
     setLoading(true);
@@ -63,10 +67,13 @@ const BookDetails = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="   mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      {
+        loading ?<div className='flex items-center justify-center p-4 mt-20'>
+          <h1 className='text-gray-800 tetx-lg'>Loading...</h1>
+          </div>:<div className="   mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center space-x-2 cursor-pointer text-white p-2 rounded-2xl mb-8 group bg-orange-400"
+          className="flex items-center space-x-2 cursor-pointer text-white px-4 py-2 rounded-xl mb-8 group bg-orange-400"
         >
           <FaArrowLeft
             size={20}
@@ -172,6 +179,7 @@ desc
           </div>
         </div>
       </div>
+      }
     </div>
   );
 };
