@@ -28,8 +28,8 @@ const Home = () => {
 
       setSelectBook(response?.data);
     } catch (error) {
-    } finally {
-    }
+      toast.error(error?.message)
+    } 
   };
 
   useEffect(() => {
