@@ -63,7 +63,7 @@ const BookDetails = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="max-w-4xl   mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="   mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <button
           onClick={() => navigate(-1)}
           className="flex items-center space-x-2 cursor-pointer text-white p-2 rounded-2xl mb-8 group bg-orange-400"

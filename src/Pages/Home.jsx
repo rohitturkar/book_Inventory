@@ -4,18 +4,20 @@ import BookTable from "../Components/BookTable";
 import EditBook from "../Components/EditBook";
 import AddBook from "../Components/AddBook";
 import DeleteBook from "../Components/DeleteBook";
-import { IoLibrary } from "react-icons/io5";
 import { CiCirclePlus, CiSearch } from "react-icons/ci";
 import toast from "react-hot-toast";
 
-const Home = () => {
-  const [books, setBooks] = useState([]);
+const Home = ({ books, setBooks, loading }) => {
   const [editModal, setEditModal] = useState(false);
   const [AddModal, setAddModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   const [selectBook, setSelectBook] = useState(null);
-  const [loading, setLoading] = useState(true);
- 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [allBooks, setAllBooks] = useState(books); 
+
+  useEffect(() => {
+    setAllBooks(books); 
+  }, [books]);
 
   const fetchCurrentBookDetail = async (book) => {
     setSelectBook();
@@ -23,38 +25,12 @@ const Home = () => {
       const response = await axios.get(
         `https://api.itbook.store/1.0/books/${book?.isbn13}`
       );
-
       console.log(response, "response");
-
       setSelectBook(response?.data);
     } catch (error) {
-      toast.error(error?.message)
-    } 
+      toast.error(error?.message);
+    }
   };
-
-  useEffect(() => {
-    setLoading(true);
-    const fetchBooks = async () => {
-      try {
-        const response = await axios.get("https://api.itbook.store/1.0/new", {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        setBooks(response?.data?.books || []);
-        toast.success("Item Fetched Successfully");
-        setLoading(false);
-      } catch (error) {
-        setLoading(false);
-
-        toast.error(error?.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBooks();
-  }, []);
 
   const handleUpdate = (updatedData) => {
     if (selectBook) {
@@ -68,9 +44,7 @@ const Home = () => {
       setSelectBook(null);
       toast.success("Item Updated Successfully!");
     } else {
-      const bookExists = books.some(
-        (book) => book.isbn13 === updatedData.isbn13
-      );
+      const bookExists = books.some((book) => book.isbn13 === updatedData.isbn13);
 
       if (!bookExists) {
         setBooks((prev) => [...prev, updatedData]);
@@ -92,7 +66,6 @@ const Home = () => {
 
   const handleEdit = async (book) => {
     await fetchCurrentBookDetail(book);
-
     setEditModal(true);
   };
 
@@ -101,23 +74,37 @@ const Home = () => {
     setDeleteModal(true);
   };
 
+  const handleSearch = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+
+    if (query === "") {
+      setAllBooks(books);
+    } else {
+      setAllBooks(
+        books.filter((book) =>
+          book.title.toLowerCase().includes(query.toLowerCase())
+        )
+      );
+    }
+  };
+
   return (
     <div className="min-h-screen ">
-      <div className=" mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 space-y-4 md:space-y-0 ">
-          <div className="flex items-center space-x-3">
-            <div className="bg-orange-400 p-3 rounded-lg">
-              <IoLibrary className="h-8 w-8 text-white" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-800 tracking-tight">
-                Book Inventory
-              </h1>
-              <p className="text-gray-900 mt-1">Manage your book shop</p>
-            </div>
+      <div className=" mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="flex flex-col md:flex-row md:justify-end gap-2 items-start md:items-center mb-8 space-y-4 md:space-y-0 ">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search books..."
+              value={searchQuery}
+              onChange={(e) => handleSearch(e)}
+              className="pl-10 pr-4 py-2 border border-gray-200 outline-none rounded-lg  w-full "
+            />
+            <CiSearch className="h-5 w-5 text-gray-400 absolute left-3 top-2.5" />
           </div>
 
-          <div className=" flex flex-col md:mt-0 mt-4 md:w-auto w-full ">
+          <div className=" flex flex-col md:mt-0  md:w-auto w-full ">
             <button
               onClick={() => {
                 setAddModal(true);
@@ -134,7 +121,7 @@ const Home = () => {
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <div className="p-6">
               <BookTable
-                books={books}
+                books={allBooks}
                 onDelete={handleDelete}
                 onEdit={handleEdit}
                 loading={loading}
@@ -154,7 +141,6 @@ const Home = () => {
               onDelete={confirmDelete}
               bookTitle={selectBook?.title}
             />
-
             <EditBook
               open={editModal}
               handleClose={() => {
