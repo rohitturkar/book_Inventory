@@ -20,6 +20,7 @@ const Layout = ({ children }) => {
   const NavItem = ({ icon: Icon, label, path }) =>
     isSidebarOpen ? (
       <NavLink
+        onClick={() => setIsMobileMenuOpen(false)}
         to={path}
         className={({ isActive }) =>
           `flex items-center  px-4 py-3 text-md font-medium rounded-lg transition-all duration-200 ${
@@ -35,6 +36,7 @@ const Layout = ({ children }) => {
     ) : (
       <NavLink
         to={path}
+        onClick={() => setIsMobileMenuOpen(false)}
         className={({ isActive }) =>
           `p-2.5 flex justify-start w-full max-w-fit  text-md font-medium rounded-lg transition-all duration-200 ${
             isActive
@@ -95,7 +97,13 @@ const Layout = ({ children }) => {
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className='flex justify-end items-center cursor-pointer' > <FaTimes className="h-4 w-4" /></div>
+        <div
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="flex justify-end items-center cursor-pointer"
+        >
+          {" "}
+          <FaTimes className="h-4 w-4" />
+        </div>
 
         <div className="flex items-center justify-between pt-4 ">
           <div className="flex items-center space-x-3 px-2 ">
@@ -135,9 +143,7 @@ const Layout = ({ children }) => {
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                   className="p-2 cursor-pointer rounded-lg text-gray-600 hover:bg-gray-100 focus:outline-none md:hidden"
                 >
-                  
-                    <FaBars className="h-6 w-6" />
-             
+                  <FaBars className="h-6 w-6" />
                 </button>
               </div>
             </div>
